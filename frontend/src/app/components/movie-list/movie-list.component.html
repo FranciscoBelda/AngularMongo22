@@ -1,0 +1,185 @@
+<div class="container-fluid">
+  <div class="w-100 d-flex">
+    <h3 class="mt-2 d-inline-block me-auto">{{movies.length}} películas</h3>
+    <h3 class="d-inline-block ms-auto pointer"
+        (click)="newMovie()"
+        data-bs-toggle="modal"
+        data-bs-target="#miModal"> Add movie
+      <i class="fas fa-plus-circle pointer"></i></h3>
+  </div>
+
+
+  <div class="container"
+       *ngFor="let movie of movies">
+    <div class="row border rounded">
+      <div class="col-md-11">
+        <div (click)="loadMovie(movie)"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#miModal"
+                                        class="row  mt-3 pt-2">
+        <div class="col-md-2">
+          <img src="{{movie.poster || 'assets/images/no-image-icon.jpg'}}" alt="{{movie.title}}">
+        </div>
+        <div class="col-md-9">
+          <h5>{{movie.title}}</h5>
+          <small class="text-danger">{{movie.genres}}</small>
+          <p><b>Director</b>: {{movie.director}} - <b>Year</b>: {{movie.year}}</p>
+          <small>{{movie.plot}}</small>
+        </div>
+        <div class="col-md-1 align-self-center align-middle">
+          <small class="badge bg-success p-3">{{movie.imdb.rating}}</small>
+        </div>
+        <div class="pb-2"></div>
+      </div>
+      </div>
+
+      <div class="col-md-1 remove d-flex">
+        <h3 class="ms-auto align-self-start">
+          <i (click)="removeMovie(movie)"
+           class="fas fa-times"></i></h3>
+      </div>
+    </div>
+    <div class="mb-2"></div>
+
+</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="miModal"
+       data-bs-backdrop="static"
+       data-bs-keyboard="false" tabindex="-1"
+       aria-labelledby="miModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="miModalLabel">
+            {{editar?formMovie.getRawValue().title:'New Movie'}}</h5>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+        </div>
+        <form [formGroup]="formMovie" (ngSubmit)="onSubmit()">
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input formControlName="title"
+                     type="text" class="form-control"
+                     id="title" value="{{formMovie.getRawValue().title}}"
+                     placeholder="Title">
+              <label for="title">
+                Title</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input  formControlName="year"
+                      type="number" class="form-control"
+                      id="year"  value="{{formMovie.getRawValue().year}}"
+                      placeholder="Year">
+              <label for="year">
+                Year</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input formControlName="director"
+                     type="text" class="form-control"
+                     id="director" value="{{formMovie.getRawValue().director}}"
+                     placeholder="Director">
+              <label for="director">
+                Director</label>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <div class="form-floating mb-3">
+                  <input formControlName="poster"
+                         type="text" class="form-control"
+                         id="poster" value="{{formMovie.getRawValue().poster}}"
+                         placeholder="Poster">
+                  <label for="poster">
+                    Poster</label>
+                </div>
+
+              </div>
+              <div class="col-4">
+                <img src="{{formMovie.getRawValue().poster || 'assets/images/no-image-icon.jpg'}}" alt="...">
+              </div>
+            </div>
+            <div class="form-floating mb-3 mt-3">
+                <textarea formControlName="plot"
+                          rows="7"
+                          class="form-control"
+                          id="plot"  value="{{formMovie.getRawValue().plot}}">
+                </textarea>
+              <label for="plot">
+                Plot</label>
+            </div>
+            <!-- select genres -->
+            <div *ngIf="editar">
+              <label for="Select">Genres</label>
+              <select class="form-select" id="Select"
+                      aria-label="Genres" multiple
+                      formControlName="genres">
+                <option *ngFor="let gen of formMovie.getRawValue().genres"
+                        [value]="gen">
+                  {{gen}}</option>
+              </select>
+            </div>
+            <div *ngIf="!editar">
+              <label for="newSelect">Genres</label>
+              <select class="form-select" id="newSelect"
+                      aria-label="Genres" multiple
+                      formControlName="genres">
+                <option *ngFor="let gen of genres"
+                        [value]="gen">
+                  {{gen}}</option>
+              </select>
+            </div>
+
+            <!-- Add New Genre -->
+            <div class="row mt-3">
+              <div class="col-8">
+                <div [formGroup]="mynewGenre" class="form-floating mb-3">
+                  <input
+                    type="text" class="form-control"
+                    id="newGenre"
+                    formControlName="newGenre"
+                    value=""
+                    placeholder="New Genre">
+                  <label for="newGenre">
+                    New Genre</label>
+                </div>
+
+              </div>
+              <div class="col-4 pt-2">
+                <h3><i class="fas fa-plus-circle pointer"
+                       (click)="addNewGenre(mynewGenre.getRawValue().newGenre)"></i></h3>
+              </div>
+            </div>
+
+            <fieldset formGroupName="imdb">
+              <legend>IMDB</legend>
+              <div class="form-floating mb-3">
+                <input formControlName="rating"
+                       type="number" class="form-control"
+                       id="rating"  value="{{formMovie.getRawValue().imdb.rating}}"
+                       placeholder="Rating">
+                <label for="rating">
+                  Rating</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input formControlName="votes"
+                       type="number" class="form-control"
+                       id="votes"  value="{{formMovie.getRawValue().imdb.votes}}"
+                       placeholder="Votes">
+                <label for="votes">
+                  Votes</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
