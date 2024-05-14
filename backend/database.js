@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const URI = 'mongodb+srv://root:root@sandbox.gr32b.mongodb.net/movies2022?retryWrites=true&w=majority';
+const URI = process.URL;
 
 mongoose.connect(URI)
     .then(db => console.log('DB connected'))
